@@ -7,15 +7,13 @@
   (println "Hello, World!"))
 
 ; -------------------------------------------------------
-; -------------------------------------------------------
-; -------------------------------------------------------
-; The BraveClojure Exercises
-; -------------------------------------------------------
-; -------------------------------------------------------
+; ---------- The BraveClojure Exercises -----------------
 ; -------------------------------------------------------
 
 ; -------------------------------------------------------
 ; Chapter 3: Do Things: A Clojure Crash Course
+; -------------------------------------------------------
+
 ; http://www.braveclojure.com/do-things/#Exercises
 ; -------------------------------------------------------
 
@@ -92,5 +90,60 @@
             (into final-body-parts (set (several-sides [part] sides))))
           []
           asym-body-parts))
+
+; -------------------------------------------------------
+; Chapter 4: Do Things: Core Functions in Depth
+; -------------------------------------------------------
+
+; http://www.braveclojure.com/core-functions-in-depth/#reduce
+; -------------------------------------------------------
+
+(defn to-list
+  "#1. Turn the result of your glitter filter into a list of names."
+  [data]
+  (map #(:name %) data))
+
+; -------------------------------------------------------
+
+(defn my-append
+  "#2. Write a function which will append a new suspect to your list of suspects."
+  [new-suspect suspect-list]
+  ; append at first place
+  ; (into suspect-list [(:name new-suspect)]))
+  ; append at the end
+  (concat (into [] suspect-list) [(:name new-suspect)]))
+
+; -------------------------------------------------------
+
+(defn validate
+  "#3.  Write a function which will check that :name and :glitter-index are present when you append.
+   The validate function should accept two arguments: a map of keywords to validating functions,
+   similar to conversions, and the record to be validated."
+  [keywords new-suspect]
+  (if (empty? keywords)
+    true
+    (and ((first keywords) new-suspect) (validate (rest keywords) new-suspect))))
+
+; -------------------------------------------------------
+
+(def vamp-filename "vampires.csv")
+
+(defn vampire-row
+  [vampire-data]
+  (str (reduce (fn [res vamp-key]
+                 (str res (vamp-key vampire-data) ","))
+                ""
+                (drop-last vamp-keys))
+       ((last vamp-keys) vampire-data)
+       "\n"))
+
+(defn store
+  "#4.  Write a function that will take your list of maps and convert it back to a CSV string.
+   You’ll need to use the clojure.string/join function."
+  [vampires-list]
+  (spit vamp-filename (reduce (fn [res vampire-data]
+                                (str res (vampire-row vampire-data)))
+                              ""
+                              vampires-list)))
 
 ; -------------------------------------------------------
