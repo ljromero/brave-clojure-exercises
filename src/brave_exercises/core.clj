@@ -137,12 +137,22 @@
        ((last vamp-keys) vampire-data)
        "\n"))
 
+(defn vampire-row-join
+  [vampire-data]
+  (str (reduce (fn [res vamp-key]
+                 (if (empty? res)
+                   (vamp-key vampire-data)
+                   (clojure.string/join "," [res (vamp-key vampire-data)])))
+                ""
+                vamp-keys)
+       "\n"))
+
 (defn store
   "#4.  Write a function that will take your list of maps and convert it back to a CSV string.
    You’ll need to use the clojure.string/join function."
   [vampires-list]
   (spit vamp-filename (reduce (fn [res vampire-data]
-                                (str res (vampire-row vampire-data)))
+                                (str res (vampire-row-join vampire-data)))
                               ""
                               vampires-list)))
 
